@@ -1,4 +1,4 @@
-# Backend Junior Project
+# Backend Senior Project
 Built with [FastAPI](https://fastapi.tiangolo.com/)
 
 ### Basic setup
