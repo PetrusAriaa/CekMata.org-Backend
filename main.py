@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.applications import JSONResponse
 from fastapi.exceptions import BaseModel
-from routes import auth_router, records_router
+from routes import auth_router, records_router, user_router
 from dotenv import load_dotenv
 
 
@@ -18,3 +18,4 @@ def get_root():
 
 app.include_router(prefix="/auth", router=auth_router)
 app.include_router(prefix="/records", router=records_router)
+app.include_router(prefix="/users", router=user_router)
