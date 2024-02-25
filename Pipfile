@@ -6,8 +6,11 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = {extras = ["default"], version = "*"}
+python-jose = {extras = ["cryptography"], version = "*"}
+python-multipart = "*"
 
 [dev-packages]
+python-dotenv = "*"
 
 [requires]
 python_version = "3.10"
