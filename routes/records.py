@@ -19,7 +19,7 @@ DUMMY_DATA = {
     "issue": "skill issue"
 }
 
-records_router = APIRouter(tags=["records"], dependencies=[Depends(validate_token)])
+records_router = APIRouter(tags=["Records"], dependencies=[Depends(validate_token)])
 
 
 @records_router.get("/")
