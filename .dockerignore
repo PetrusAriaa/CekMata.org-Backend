@@ -1,0 +1,24 @@
+# cache
+__pycache__
+
+# github
+.github
+.git
+.gitignore
+README.md
+
+# vscode
+.vscode
+.vs
+
+# Pipenv
+Pipfile
+Pipfile.lock
+
+# postgres
+utils/models.pgerd
+utils/models.sql
+
+# examples
+.env.example
+secret
