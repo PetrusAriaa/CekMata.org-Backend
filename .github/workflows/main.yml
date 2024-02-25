@@ -1,7 +1,8 @@
 name: 'Sync Submodules'
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   sync:
