@@ -4,7 +4,6 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN \
-    # apk update && apk upgrade && \
     pip install --upgrade pip && \
     pip install -r requirements.txt --no-cache-dir
 
