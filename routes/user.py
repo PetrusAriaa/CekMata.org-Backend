@@ -1,9 +1,12 @@
 import uuid
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.applications import JSONResponse
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from utils.validate_uuid import validate_uuid
+from db import get_db
+from models import Users
 
 
 class UserModel(BaseModel):
@@ -20,9 +23,9 @@ def __create_user(user_data: UserModel) -> str:
 
 
 @user_router.get("/")
-def create_user(id: str) -> JSONResponse:
-    user_id = validate_uuid(id)
-    return JSONResponse({'user_id': str(user_id)})
+def create_user(db: Session = Depends(get_db)) -> JSONResponse:
+    users = db.query(Users).all()
+    return JSONResponse({"username": users[0].username, "password": users[0].password})
 
 
 @user_router.post("/")
