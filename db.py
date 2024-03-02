@@ -1,13 +1,10 @@
-from os import getenv
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from config import get_env
 
-load_dotenv(".env.development") # this load_dotenv is necessary
-
-engine = create_engine(getenv('PG_CONNECTION'))
+engine = create_engine(get_env('PG_CONNECTION'))
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
