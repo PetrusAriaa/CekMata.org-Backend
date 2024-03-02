@@ -1,15 +1,16 @@
-from sqlalchemy import UUID, Column, Date, String, DateTime, text
+from sqlalchemy import UUID, Column, Date, ForeignKey, String, DateTime, text
+from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql import func
 
 from db import Base
 
 class Patients(Base):
-    __tablename__ = "patient"
+    __tablename__ = "patients"
 
-    id = Column(UUID, primary_key=True, unique=True)
+    id = Column(UUID, primary_key=True, unique=True, server_default=text("gen_random_uuid()"))
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=text("NULL ON UPDATE CURRENT_TIMESTAMP"))
-    deleted_at = Column(DateTime, server_default=text("NULL ON DELETE CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime)
+    deleted_at = Column(DateTime)
     code = Column(String(9))
     name = Column(String(255))
     birth = Column(Date)
