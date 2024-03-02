@@ -10,6 +10,7 @@ python-jose = {extras = ["cryptography"] }
 python-multipart = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
+alembic = "*"
 
 [dev-packages]
 python-dotenv = "*"
