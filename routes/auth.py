@@ -27,9 +27,9 @@ auth_router = APIRouter(tags=["Authentication"])
 def __generate_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     token = jwt.encode(to_encode, getenv("SECRET"), getenv("ALGORITHM"))
     return token
