@@ -11,6 +11,9 @@ python-multipart = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
 alembic = "*"
+torch = "*"
+pillow = "*"
+torchvision = "*"
 
 [dev-packages]
 python-dotenv = "*"
