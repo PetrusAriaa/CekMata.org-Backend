@@ -11,10 +11,6 @@ README.md
 .vscode
 .vs
 
-# Pipenv
-Pipfile
-Pipfile.lock
-
 # postgres
 utils/models.pgerd
 utils/models.sql
