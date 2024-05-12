@@ -7,11 +7,11 @@
 # Function may not be used in production.
 # Set env variables using docker-compose.yml instead.
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 import os
 
-load_dotenv('.env.development')
+# load_dotenv('.env.development')
 
 def get_env(key: str) -> str:
     return os.getenv(key)
