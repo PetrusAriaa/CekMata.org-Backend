@@ -35,7 +35,7 @@ class ControlModel(BaseModel):
     patient_id: uuid.UUID
     nik: str
     name: str
-    last_control: datetime
+    created_at: datetime
 
 class ControlResponseModel(BaseResponseModel):
     data: Iterable[ControlModel]

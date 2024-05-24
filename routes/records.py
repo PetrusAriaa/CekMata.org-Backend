@@ -100,7 +100,7 @@ def create_record(patient_data: CreateRecordRequestModel, db: Session=Depends(ge
 def get_patient_records(patient_id: str, db: Session=Depends(get_db)):
     validate_uuid(patient_id)
     records = db.execute(text(f"""
-                        select p.id as patient_id, p.nik, p."name", c.last_control from patients p
+                        select p.id as patient_id, p.nik, p."name", c.created_at from patients p
                             join controls c on c.fk_patient_id = p.id
                             where c.fk_patient_id = '{patient_id}';
                         """))
