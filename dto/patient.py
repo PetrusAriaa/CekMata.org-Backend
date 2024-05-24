@@ -10,7 +10,7 @@ class CreateRecordRequestModel(BaseModel):
     name: str
     birth: date
     phone: str
-    patient_code: str
+    patient_nik: str
 
 class RecordCreatedModel(BaseModel):
     patient_id: uuid.UUID
@@ -20,7 +20,7 @@ class RecordCreatedResponseModel(BaseResponseModel):
     data: RecordCreatedModel
 
 class PatientModel(BaseModel):
-    code: str
+    nik: str
     birth: date
     classification: str | None = None
     id: uuid.UUID
@@ -33,7 +33,7 @@ class PatientResponseModel(BaseResponseModel):
 
 class ControlModel(BaseModel):
     patient_id: uuid.UUID
-    code: str
+    nik: str
     name: str
     last_control: datetime
 

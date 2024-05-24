@@ -23,7 +23,7 @@ def __create_patient(patient_data: CreateRecordRequestModel, db: Session):
     record_id = uuid.uuid4()
     
     patient = db.query(Patients) \
-                .filter(Patients.code == patient_data.patient_code).first()
+                .filter(Patients.nik == patient_data.patient_nik).first()
     if patient is not None:
         patient_id = patient.id
         record = db.query(Controls) \
@@ -34,7 +34,7 @@ def __create_patient(patient_data: CreateRecordRequestModel, db: Session):
     else:
         patient = Patients(
             id = patient_id,
-            code = patient_data.patient_code,
+            nik = patient_data.patient_nik,
             name = patient_data.name,
             birth = patient_data.birth,
             phone = patient_data.phone,
@@ -47,7 +47,7 @@ def __create_patient(patient_data: CreateRecordRequestModel, db: Session):
         id = record_id,
         created_at = current_date,
         fk_patient_id = patient_id,
-        fk_patient_code = patient_data.patient_code,
+        fk_patient_nik = patient_data.patient_nik,
         patient_name = patient_data.name,
         last_control = last_control
     )
@@ -56,9 +56,9 @@ def __create_patient(patient_data: CreateRecordRequestModel, db: Session):
     return patient_id, record_id
 
 
-def __select_patient_data(patientCode: str, db: Session):
+def __select_patient_data(patient_nik: str, db: Session):
     patient_list = []
-    if patientCode is None:
+    if patient_nik is None:
         patients = db.query(Patients).all()
         patient_list = []
         for patient in patients:
@@ -66,7 +66,7 @@ def __select_patient_data(patientCode: str, db: Session):
             patient_list.append(PatientModel(**_patient))
         return patient_list
     
-    patients = db.query(Patients).filter(Patients.code.contains(patientCode)).limit(5).all()
+    patients = db.query(Patients).filter(Patients.nik.contains(patient_nik)).limit(5).all()
     for patient in patients:
         _patient = patient.__dict__
         patient_list.append(PatientModel(**_patient))
@@ -74,8 +74,8 @@ def __select_patient_data(patientCode: str, db: Session):
 
 
 @records_router.get("/patient", response_model=PatientResponseModel)
-def get_patient_data(patientCode: str=None, db: Session= Depends(get_db)):
-    patient_list = __select_patient_data(patientCode, db)
+def get_patient_data(NIK: str=None, db: Session= Depends(get_db)):
+    patient_list = __select_patient_data(NIK, db)
     res = PatientResponseModel(
             code = status.HTTP_200_OK,
             data = patient_list
@@ -100,7 +100,7 @@ def create_record(patient_data: CreateRecordRequestModel, db: Session=Depends(ge
 def get_patient_records(patient_id: str, db: Session=Depends(get_db)):
     validate_uuid(patient_id)
     records = db.execute(text(f"""
-                        select p.id as patient_id, p.code, p."name", c.last_control from patients p
+                        select p.id as patient_id, p.nik, p."name", c.last_control from patients p
                             join controls c on c.fk_patient_id = p.id
                             where c.fk_patient_id = '{patient_id}';
                         """))

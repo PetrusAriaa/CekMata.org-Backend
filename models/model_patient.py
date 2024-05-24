@@ -11,7 +11,7 @@ class Patients(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
-    code = Column(String(9))
+    nik = Column(String(9))
     name = Column(String(255))
     birth = Column(Date)
     phone = Column(String(20))

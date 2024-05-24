@@ -11,6 +11,6 @@ class Controls(Base):
     updated_at = Column(DateTime)
     deleted_at = Column(DateTime)
     fk_patient_id = Column(UUID, ForeignKey('patients.id'))
-    fk_patient_code = Column(String(9), ForeignKey('patients.code'))
+    fk_patient_nik = Column(String(20), ForeignKey('patients.nik'))
     patient_name = Column(String(255))
     last_control = Column(DateTime, server_default=func.now())
