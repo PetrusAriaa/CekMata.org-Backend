@@ -86,7 +86,7 @@ def __select_active_patient_data(db: Session):
 
 def __update_patient_classification(patient_id:str, diag:str, db: Session):
     curr = datetime.now()
-    record = db.query(Controls).where(Controls.fk_patient_id==patient_id and Controls.classification==None).first()
+    record = db.query(Controls).where(Controls.fk_patient_id==patient_id and Controls.updated_at==None).order_by(Controls.created_at.desc()).first()
     patient = db.query(Patients).where(Patients.id==patient_id).first();
     if patient:
         patient.classification = diag
@@ -107,7 +107,7 @@ def get_patient_data(NIK: str=None, db: Session= Depends(get_db)):
     return res
 
 
-@records_router.post("", response_model=RecordCreatedResponseModel)
+@records_router.post("", response_model=RecordCreatedResponseModel, status_code=201)
 def create_record(patient_data: CreateRecordRequestModel, db: Session=Depends(get_db)):
     patient_id, record_id = __create_patient(patient_data, db)
     res = RecordCreatedResponseModel(
@@ -161,7 +161,7 @@ def __select_today_records(db: Session):
     controls = db.query(Controls).filter(
         Controls.created_at >= start,
         Controls.created_at <= end
-    ).all()
+    ).order_by(Controls.created_at.desc()).all()
     
     records = []
     for control in controls:
