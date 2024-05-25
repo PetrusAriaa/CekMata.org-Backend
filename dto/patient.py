@@ -39,3 +39,13 @@ class ControlModel(BaseModel):
 
 class ControlResponseModel(BaseResponseModel):
     data: Iterable[ControlModel]
+
+class ActivePatientModel(BaseModel):
+    id: uuid.UUID
+    name: str
+
+class ActivePatientResponseModel(BaseResponseModel):
+    data: Iterable[ActivePatientModel]
+
+class PatientClassificationRequestModel(BaseModel):
+    classification: str

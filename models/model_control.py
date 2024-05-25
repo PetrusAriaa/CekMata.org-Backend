@@ -14,3 +14,4 @@ class Controls(Base):
     fk_patient_nik = Column(String(20), ForeignKey('patients.nik'))
     patient_name = Column(String(255))
     last_control = Column(DateTime, server_default=func.now())
+    classification = Column(String(255))

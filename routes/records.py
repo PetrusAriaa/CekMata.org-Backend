@@ -1,14 +1,16 @@
-from datetime import datetime
+from datetime import date, datetime, time
 import uuid
 
 from fastapi import APIRouter, Depends, status
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from .auth import validate_token
 from db import get_db
 from dto import CreateRecordRequestModel, RecordCreatedResponseModel, \
-    PatientResponseModel, PatientModel, ControlModel, ControlResponseModel
+    PatientResponseModel, PatientModel, ControlModel, ControlResponseModel, \
+    ActivePatientModel, ActivePatientResponseModel, PatientClassificationRequestModel
 from models import Patients, Controls
 from utils.validate_uuid import validate_uuid
 
@@ -72,6 +74,28 @@ def __select_patient_data(patient_nik: str, db: Session):
         patient_list.append(PatientModel(**_patient))
     return patient_list
 
+def __select_active_patient_data(db: Session):
+    patient_list = []
+    patients = db.query(Controls).filter(Controls.classification==None).all()
+    for patient in patients:
+        patient_list.append(ActivePatientModel(
+                                            id=patient.fk_patient_id,
+                                            name=patient.patient_name))
+    return patient_list
+
+
+def __update_patient_classification(patient_id:str, diag:str, db: Session):
+    curr = datetime.now()
+    record = db.query(Controls).where(Controls.fk_patient_id==patient_id and Controls.classification==None).first()
+    patient = db.query(Patients).where(Patients.id==patient_id).first();
+    if patient:
+        patient.classification = diag
+        patient.updated_at = curr
+        record.classification = diag
+        record.updated_at = curr
+        db.commit()
+        return patient.id
+    return None
 
 @records_router.get("/patient", response_model=PatientResponseModel)
 def get_patient_data(NIK: str=None, db: Session= Depends(get_db)):
@@ -110,5 +134,53 @@ def get_patient_records(patient_id: str, db: Session=Depends(get_db)):
     res = ControlResponseModel(
         code=status.HTTP_200_OK,
         data=_records
+    )
+    return res
+
+
+@records_router.get("/patients/active")
+def get_active_patient(db: Session=Depends(get_db)):
+    patients = __select_active_patient_data(db)
+    res = ActivePatientResponseModel(
+            code = status.HTTP_200_OK,
+            data = patients
+        )
+    return res
+
+
+@records_router.patch("/{patientId}")
+def update_patient(patientId: str, req: PatientClassificationRequestModel, db: Session=Depends(get_db)):
+    patient_id = __update_patient_classification(patientId, req.classification, db)
+    return JSONResponse({"status": "OK"})
+
+
+def __select_today_records(db: Session):
+    start = datetime.combine(date.today(), time.min)
+    end = datetime.combine(date.today(), time.max)
+    
+    controls = db.query(Controls).filter(
+        Controls.created_at >= start,
+        Controls.created_at <= end
+    ).all()
+    
+    records = []
+    for control in controls:
+        records.append(
+            ControlModel(
+                patient_id=control.fk_patient_id,
+                name=control.patient_name,
+                nik=control.fk_patient_nik,
+                created_at=control.created_at
+            )
+        )
+    return records
+
+
+@records_router.get("/patients/today")
+def get_today_records(db: Session=Depends(get_db)):
+    records = __select_today_records(db)
+    res = ControlResponseModel(
+        code=status.HTTP_200_OK,
+        data=records
     )
     return res
