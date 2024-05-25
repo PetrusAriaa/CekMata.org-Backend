@@ -5,11 +5,20 @@ from routes import auth_router, records_router, user_router, predictor_router
 from dto import HealthCheckResponseModel
 # from dotenv import load_dotenv
 from torch import nn
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # load_dotenv(".env.development")
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_methods=['*'],
+    allow_credentials=True,
+    allow_headers=['*']
+)
 
 
 @app.get("/health", response_model=HealthCheckResponseModel, tags=['HealthCheck'])
