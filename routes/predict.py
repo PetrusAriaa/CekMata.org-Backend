@@ -17,7 +17,7 @@ file_type = [
 
 CLASSES = ['Cataract', 'Diabetic Retinopathy', 'Glaucoma', 'Normal']
 
-predictor_router = APIRouter(tags=['Predictor'], dependencies=[Depends(validate_token)])
+predictor_router = APIRouter(tags=['Predictor'])
 
 def prepare(byte_image):
     img = Image.open(io.BytesIO(byte_image)).resize((256,256))
