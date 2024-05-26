@@ -4,7 +4,6 @@ from dto.base_response import HealthCheckModel
 from routes import auth_router, records_router, user_router, predictor_router
 from dto import HealthCheckResponseModel
 # from dotenv import load_dotenv
-from torch import nn
 from fastapi.middleware.cors import CORSMiddleware
 
 

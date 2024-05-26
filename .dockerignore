@@ -15,6 +15,16 @@ README.md
 utils/models.pgerd
 utils/models.sql
 
-# examples
+# secret
 .env.example
 secret
+
+.dockerignore
+Dockerfile
+run_debug.sh
+
+Pipfile
+Pipfile.lock
+
+alembic
+alembic.ini
