@@ -10,10 +10,9 @@ python-multipart = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
 alembic = "*"
-torch = "*"
 pillow = "*"
-torchvision = "*"
 bcrypt = "*"
+onnxruntime = "*"
 
 [dev-packages]
 python-dotenv = "*"
