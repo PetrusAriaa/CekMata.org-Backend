@@ -2,8 +2,8 @@ import io
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 from PIL import Image
-import torchvision.transforms as transforms
-import torch
+import onnxruntime as ort
+import numpy as np
 
 
 from .auth import validate_token
@@ -15,18 +15,24 @@ file_type = [
     'image/jpg'
 ]
 
+CLASSES = ['Cataract', 'Diabetic Retinopathy', 'Glaucoma', 'Normal']
+
 predictor_router = APIRouter(tags=['Predictor'], dependencies=[Depends(validate_token)])
 
-model = torch.jit.load('cekmata_model.pt')
-
 def prepare(byte_image):
-    trf = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Resize(256),
-    ])
+    img = Image.open(io.BytesIO(byte_image)).resize((256,256))
+    img_arr = np.array(img)
     
-    img = Image.open(io.BytesIO(byte_image))
-    return trf(img).unsqueeze(0)
+    if img_arr.ndim == 2:
+        img_arr = np.stack([img_arr] * 3, axis=-1)
+    
+    img_arr = img_arr.astype(np.float32) / 255.0
+    img_arr = np.transpose(img_arr, (2, 0, 1))
+    img_arr = np.expand_dims(img_arr, axis=0)
+    
+    
+    
+    return img_arr
 
 
 @predictor_router.post('')
@@ -42,15 +48,14 @@ def predict(file: UploadFile):
     img = file.file.read()
     tensor = prepare(img)
     
-    class_name = 'None'
+    model = ort.InferenceSession("model.onnx")
+    
     try:
-        with torch.no_grad():
-            model.eval()
-            output =model(tensor)
-            index = output.data.cpu().numpy().argmax()
-            classes = ['Cataract', 'Diabetic Retinopathy', 'Glaucoma', 'Normal']
-            class_name = classes[index]
-        return JSONResponse({'status': class_name})
+        ort_inputs = {model.get_inputs()[0].name: tensor}
+        ort_outs = model.run(None, ort_inputs)
+        index = np.array(ort_outs).argmax()
+        class_name = CLASSES[index]
+        return JSONResponse({'status': class_name })
     except:
         raise HTTPException(status_code=400, detail='Cannot process image data, please use different image',
                             headers={
